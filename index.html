@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+	background-color: black;
+	color: white;
+}
+</style>
+<title>Page Title</title>
+</head>
+<body>
+
+<div></div>
+<div id="main">
+	<div class="1">
+	<div class="2">cerca de main</div>
+		<div class="3">
+			<div class="4">algo</div>
+			<div class="5">algo mas</div>
+				<div class="container1">
+					<div class="3">
+						<div class="4">algo</div>
+						<div class="5">algo mas</div>
+						<div class="container2">
+							<p>Hola</p>
+						</div>
+					</div>
+					<p>Hola</p>
+				</div>
+		</div>
+	</div>	
+</div>
+
+<script>
+
+
+
+
+var selected = document.querySelector(".container2 p");
+
+
+
+function checkSelectedAmongSiblings(targetElement, tagType) { 
+
+	let parent = targetElement.parentElement;
+	
+	var siblings = targetElement.parentElement.children;
+	
+	var childrenArray = Array.prototype.slice.call(siblings);
+	
+	var childrenFilterBySameTagName = childrenArray.filter(function(item){
+		return item.tagName == tagType;
+	});
+	
+	if (childrenFilterBySameTagName.length > 1){
+		
+		for (let a = 0; a < childrenArray.length ; a++){
+			if (childrenArray[a] == targetElement){
+			   //console.log("found a position: "+a + " element is: " + childrenArray[a]);
+			   return a+1;
+			}
+		}
+	} else {
+		return false;
+	}  
+}
+
+function getXPath(targetElement) {
+	
+	var exit = true;
+	
+	var xPathOutput = "";
+	
+	var elemTagName = targetElement.tagName;
+	
+	var targetElementTagName = targetElement.tagName.toLowerCase();
+	
+	xPathOutput = "/" + targetElementTagName;
+	
+	var elementPosition = checkSelectedAmongSiblings(targetElement, elemTagName);
+		
+	if (elementPosition != false) {
+		xPathOutput = xPathOutput + "[" + elementPosition + "]";
+	}
+	
+	var nextChunk = "";
+	
+	let currentParent;
+	let nextParent;
+	
+	do {
+		
+		targetElement = targetElement.parentElement;
+		
+		if (targetElement.id != ""){
+			nextChunk = "//*";
+			nextChunk = nextChunk + `[@id="${targetElement.id}"]`;
+			exit = false;
+		} else {
+			
+			nextChunk = "/" + targetElement.tagName.toLowerCase();
+			
+			elemTagName = targetElement.tagName;
+			
+			var elementPosition = checkSelectedAmongSiblings(targetElement, elemTagName);
+			
+			if (elementPosition != false) {
+				nextChunk = nextChunk + "[" + elementPosition + "]";
+			}
+		}
+		
+		xPathOutput = nextChunk + xPathOutput;		
+		
+	} while(exit);
+
+	return xPathOutput;
+}
+</script>
+</body>
+</html>
